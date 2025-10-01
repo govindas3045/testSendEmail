@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        /* Scrollable container */
+        .scroll-container {
+            display: flex;
+            gap: 10px;              /* spacing between images */
+            overflow-x: auto;       /* horizontal scroll if needed */
+            padding: 10px;
+            border: 1px solid #ccc; /* optional styling */
+            white-space: nowrap;    /* prevents wrapping */
+        }
+
+        /* Each graph keeps its natural size */
+        .ticker_graph {
+            flex: 0 0 auto;         /* don’t shrink */
+        }
+
+        /* Images scale naturally within container */
+        .ticker_graph img {
+            display: block;
+            height: 150px;          /* optional fixed height */
+            width: auto;            /* maintain aspect ratio */
+        }
+    </style>
+  </head>
+  <body>
+    <h1>Today's Tickers:</h1>
+    {{images}}
+  </body>
+</html>
