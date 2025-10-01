@@ -1,5 +1,3 @@
-import requests
-import csv
 from datetime import date
 import smtplib
 from email.message import EmailMessage
