@@ -32,5 +32,5 @@ jobs:
           name: plots
           path: ./images/plots
 
-      - name: Run script
-        run: python testSendImage.py
+      # - name: Run script
+      #   run: python testSendImage.py
