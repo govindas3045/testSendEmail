@@ -24,7 +24,7 @@ jobs:
           pip install matplotlib numpy
 
       - name: Run script
-        run: python your_script.py
+        run: python testSendImage.py
 
       - name: Upload generated images
         uses: actions/upload-artifact@v4
