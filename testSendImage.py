@@ -1,38 +1,68 @@
-import numpy as np
-import matplotlib.pyplot as plt
+import requests
+import csv
+from datetime import date
+import smtplib
+from email.message import EmailMessage
 import os
-from datetime import datetime  # Add this import
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 
-image_save_path = "./images/plots"
-os.makedirs(image_save_path, exist_ok=True)  # Creates both images and plots folders
 
-# Define the polynomial coefficients (example: x^3 - 2x^2 + 3x - 5)
-coeffs = [1, -2, 3, -5]
+'''Sending the email'''
+# Email configuration
+smtp_server = 'smtp.gmail.com'
+smtp_port = 587
+sender_email = 'govindplaystation4028@gmail.com'
+sender_password = 'nvka suug mepj evpp'
 
-# Create a polynomial object
-p = np.poly1d(coeffs)
+# List of recipients
+# recipients = ['govindsomadas@gmail.com', 'psdj1997@gmail.com']
+recipients = ['govindsomadas@gmail.com']
 
-# Generate x values
-x = np.linspace(-10, 10, 400)
+# Create the email
+msg = EmailMessage()
+msg['Subject'] = 'TestEmail_021'
+msg['From'] = sender_email
+msg['To'] = ', '.join(recipients)
+msg.set_content("If you're seeing this then it looks like the email content generation fucked up")
 
-# Compute y values
-y = p(x)
+# Load HTML template from a file
+with open("email-templates/index.html", "r", encoding="utf-8") as f:
+    html_template = f.read()
 
-# Plot the polynomial
-plt.figure(figsize=(8, 6))
-plt.plot(x, y, label=f"Polynomial: {p}", color="blue")
-plt.axhline(0, color="black", linewidth=0.7)  # x-axis
-plt.axvline(0, color="black", linewidth=0.7)  # y-axis
-plt.grid(True, linestyle="--", alpha=0.6)
-plt.legend()
-plt.title("Polynomial Graph")
-plt.xlabel("x")
-plt.ylabel("P(x)")
+# Build repeated <img> tags
+images_folder_path = "./images/plots"
+image_files = [f for f in os.listdir(images_folder_path) if os.path.isfile(os.path.join(images_folder_path, f))]
 
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-filename = f"plot_{timestamp}.png"
+html_insert = "<div>"
+for image_file in image_files:
+    html_insert += f'<div class="ticker_graph"><img src="cid:{image_file}"></div>'
+    html_insert += '</div>'
 
-plt.savefig(os.path.join(image_save_path, filename), format='png')
-# plt.show()
+# image_files = [f for f in os.listdir(images_folder_path) if os.path.isfile(os.path.join(folder_path, f))]
 
-# print('hello')
+# images_html = "".join([f'<div><img src="cid:{i}"></div>' for i in image_files])
+html_content = html_template.replace("{{images}}", html_insert)
+print(html_content)
+
+msg.add_alternative(html_content, subtype='html')
+
+for i, image_file in enumerate(image_files):
+    image_path = os.path.join(images_folder_path, image_file)
+    with open(image_path, "rb") as f:
+        img_data = f.read()
+        msg.get_payload()[1].add_related(img_data,
+                                        maintype="image",
+                                        subtype="png",
+                                        cid=f"<{image_file}>")
+        
+try:
+    # Connect to SMTP server and send email
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        print('Email sent successfully to multiple recipients!')
+except Exception as e:
+    print(f'Failed to send email: {e}')
