@@ -24,10 +24,13 @@ jobs:
           pip install matplotlib numpy
 
       - name: Run script
-        run: python testSendImage.py
+        run: python testSaveImage.py
 
       - name: Upload generated images
         uses: actions/upload-artifact@v4
         with:
           name: plots
           path: ./images/plots
+
+      - name: Run script
+        run: python testSendImage.py
